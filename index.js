@@ -103,13 +103,30 @@ async function run() {
       res.send(result)
 
     })
+    // get role from userCollection
+    app.get('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = {email: email}
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    })
 
     // rooms collection use here
     app.get('/rooms', async (req, res) => {
       const result = await roomsCollection.find().toArray();
       res.send(result);
     })
-    app.get('/rooms/:id', async (req, res) => {
+
+    // get room for host
+    app.get('/rooms/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = {'host.email': email}
+      const result = await roomsCollection.find(query).toArray();
+      res.send(result);
+    })
+
+    // get single room data to id base
+    app.get('/room/:id', async (req, res) => {
       const id = req?.params.id;
       const query = {_id: new ObjectId(id)}
       const result = await roomsCollection.findOne(query);
@@ -132,7 +149,7 @@ async function run() {
   }
 }
 run().catch(console.dir)
-
+  
 app.get('/', (req, res) => {
   res.send('Hello from StayVista Server..')
 })
